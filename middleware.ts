@@ -1,23 +1,39 @@
-import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
+import { NextResponse } from "next/server"
+import type { NextRequest } from "next/server"
 
-// Define your routes
-const protectedRoutes = ["/dashboard"];
-const guestRoutes = ["/login", "/signup"];
+export function middleware(request: NextRequest) {
+  const token = request.cookies.get("auth_token")?.value
+  const { pathname } = request.nextUrl
 
-export function middleware(req: NextRequest) {
-    const token = req.cookies.get("auth_token")?.value;
-    const { pathname } = req.nextUrl;
+  const isAuthPage =
+    pathname === "/login" ||
+    pathname === "/signup" ||
+    pathname === "/"
 
-    // Protect routes
-    if (protectedRoutes.some((r) => pathname.startsWith(r)) && !token) {
-        return NextResponse.redirect(new URL("/login", req.url));
-    }
+  const isApiRoute = pathname.startsWith("/api")
+  const isStatic =
+    pathname.startsWith("/_next") ||
+    pathname.startsWith("/favicon.ico")
 
-    // Redirect logged-in users away from guest routes
-    if (guestRoutes.some((r) => pathname.startsWith(r)) && token) {
-        return NextResponse.redirect(new URL("/dashboard", req.url));
-    }
+  if (isApiRoute || isStatic) {
+    return NextResponse.next()
+  }
 
-    return NextResponse.next();
+  if (!token && !isAuthPage) {
+    const loginUrl = request.nextUrl.clone()
+    loginUrl.pathname = "/login"
+    return NextResponse.redirect(loginUrl)
+  }
+
+  if (token && isAuthPage) {
+    const dashboardUrl = request.nextUrl.clone()
+    dashboardUrl.pathname = "/dashboard"
+    return NextResponse.redirect(dashboardUrl)
+  }
+
+  return NextResponse.next()
+}
+
+export const config = {
+  matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
 }
