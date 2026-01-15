@@ -1,3 +1,5 @@
+"use client"
+
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import {
@@ -38,7 +40,7 @@ export function LoginForm({
       }),
     })
 
-    console.log(response)
+
     const data = await response.json()
 
     if (!response.ok) {
@@ -47,6 +49,7 @@ export function LoginForm({
     }
 
     alert("Login successful")
+    window.location.href = "/dashboard"
   }
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
@@ -63,7 +66,9 @@ export function LoginForm({
               <Field>
                 <FieldLabel htmlFor="email">Email</FieldLabel>
                 <Input
+
                   id="email"
+                  name="email"
                   type="email"
                   placeholder="m@example.com"
                   required
@@ -79,7 +84,7 @@ export function LoginForm({
                     Forgot your password?
                   </a>
                 </div>
-                <Input id="password" type="password" required />
+                <Input id="password" type="password" name="password" required />
               </Field>
               <Field>
                 <Button type="submit">Login</Button>

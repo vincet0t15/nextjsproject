@@ -17,21 +17,18 @@ export async function POST(request: Request) {
 
     const data = await res.json();
 
-    if (!res.ok) {
+    if (!res.ok || !data.token) {
         return NextResponse.json({ message: data.message || "Signup failed" }, { status: 400 });
     }
 
-    // Set auth token if Laravel returns it
     const response = NextResponse.json({ message: "Signup successful" });
-    if (data.access_token) {
-        response.cookies.set("auth_token", data.access_token, {
-            httpOnly: true,
-            path: "/",
-            maxAge: 60 * 60 * 24 * 7,
-            sameSite: "lax",
-            secure: process.env.NODE_ENV === "production",
-        });
-    }
+    response.cookies.set("auth_token", data.token, {
+        httpOnly: true,
+        path: "/",
+        maxAge: 60 * 60 * 24 * 7,
+        sameSite: "lax",
+        secure: process.env.NODE_ENV === "production",
+    });
 
     return response;
 }

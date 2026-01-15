@@ -13,12 +13,12 @@ export async function POST(request: Request) {
 
     const data = await res.json();
 
-    if (!res.ok || !data.access_token) {
+    if (!res.ok || !data.token) {
         return NextResponse.json({ message: data.message || "Login failed" }, { status: 401 });
     }
 
     const response = NextResponse.json({ message: "Login successful" });
-    response.cookies.set("auth_token", data.access_token, {
+    response.cookies.set("auth_token", data.token, {
         httpOnly: true,
         path: "/",
         maxAge: 60 * 60 * 24 * 7, // 7 days
