@@ -28,6 +28,8 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar"
+import { useRouter } from "next/navigation"
+
 
 export function NavUser({
   user,
@@ -39,11 +41,12 @@ export function NavUser({
   }
 }) {
   const { isMobile } = useSidebar()
+  const router = useRouter()
   async function handleLogout() {
     await fetch("/api/logout", {
       method: "POST",
     })
-    window.location.href = "/"
+    router.push("/login")
   }
   return (
     <SidebarMenu>

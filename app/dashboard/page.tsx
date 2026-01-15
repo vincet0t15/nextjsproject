@@ -13,8 +13,8 @@ import { redirect } from "next/navigation"
 import data from "./data.json"
 
 export default async function Page() {
-  const cookieStore = cookies()
-  const token = (await cookieStore).get("auth_token")?.value
+  const cookieStore = await cookies()
+  const token = cookieStore.get("auth_token")?.value
 
   // If no token, redirect to login
   if (!token) {

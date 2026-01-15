@@ -17,11 +17,13 @@ import {
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
+  const router = useRouter()
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -29,7 +31,7 @@ export function LoginForm({
     const email = formData.get("email") as string
     const password = formData.get("password") as string
 
-    const response = await fetch("api/login", {
+    const response = await fetch("/api/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -49,7 +51,7 @@ export function LoginForm({
     }
 
     alert("Login successful")
-    window.location.href = "/dashboard"
+    router.push("/dashboard")
   }
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
