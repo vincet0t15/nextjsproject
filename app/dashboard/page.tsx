@@ -7,10 +7,20 @@ import {
   SidebarInset,
   SidebarProvider,
 } from "@/components/ui/sidebar"
+import { cookies } from "next/headers"
+import { redirect } from "next/navigation"
 
 import data from "./data.json"
 
-export default function Page() {
+export default async function Page() {
+  const cookieStore = cookies()
+  const token = (await cookieStore).get("auth_token")?.value
+
+  // If no token, redirect to login
+  if (!token) {
+    redirect("/login")
+  }
+
   return (
     <SidebarProvider
       style={
